@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career OS</title>
+<style>
+:root {
+  --bg: #0d0f14;
+  --surface: #161922;
+  --surface2: #1e2230;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --accent: #6366f1;
+  --accent2: #3dd9a4;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+  --success: #3dd9a4;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+.shell { display: flex; min-height: 100vh; }
+.sidebar { width: 230px; background: var(--surface); border-right: 1px solid var(--border); padding: 0; display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; }
+.main { margin-left: 230px; flex: 1; padding: 36px 40px; }
+
+.logo { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); }
+.logo-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.2px; }
+.logo-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.nav-section { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; padding: 18px 20px 6px; }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 20px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 500; border-left: 2px solid transparent; transition: all .15s; user-select: none; }
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(99,102,241,0.08); }
+.nav-icon { font-size: 15px; width: 16px; text-align: center; }
+
+.sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); }
+.ai-dot { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.page-header { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.page-header-text h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.4px; }
+.page-header-text p { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; }
+.card + .card { margin-top: 14px; }
+.card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); margin-bottom: 14px; font-weight: 500; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.stat-value { font-size: 28px; font-weight: 600; letter-spacing: -0.5px; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+input, textarea, select { background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 13px; font-family: inherit; padding: 9px 12px; width: 100%; outline: none; transition: border .15s; }
+input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+textarea { resize: vertical; }
+label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 5px; }
+.field { margin-bottom: 13px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 13px; }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; transition: all .15s; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #5254cc; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,.22); }
+.btn-sm { padding: 5px 11px; font-size: 12px; }
+.btn-danger { background: rgba(239,68,68,.12); color: var(--danger); border: 1px solid rgba(239,68,68,.2); }
+
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.tag-blue { background: rgba(99,102,241,.15); color: #a5b4fc; }
+.tag-green { background: rgba(61,217,164,.12); color: var(--success); }
+.tag-warn { background: rgba(245,158,11,.13); color: var(--warn); }
+.tag-red { background: rgba(239,68,68,.12); color: var(--danger); }
+.tag-gray { background: rgba(255,255,255,.07); color: var(--muted); }
+.tag-purple { background: rgba(167,139,250,.13); color: #c4b5fd; }
+
+.progress-bar { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width .4s; }
+
+.list-row { padding: 13px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
+.list-row:last-child { border-bottom: none; padding-bottom: 0; }
+.list-row-body { flex: 1; min-width: 0; }
+.list-row-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.list-row-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.list-row-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 200; display: none; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 26px; width: 500px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.modal-head h3 { font-size: 15px; font-weight: 600; }
+.close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; line-height: 1; }
+
+.chat-wrap { display: flex; flex-direction: column; height: 540px; }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.chip { background: var(--surface2); border: 1px solid var(--border2); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
+.chip:hover { color: var(--accent); border-color: var(--accent); }
+.chat-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: thin; scrollbar-color: var(--border2) transparent; }
+.msg { max-width: 88%; }
+.msg.user { align-self: flex-end; }
+.msg-name { font-size: 10px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .5px; }
+.bubble { padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.65; }
+.msg.user .bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg.ai .bubble { background: var(--surface2); border: 1px solid var(--border); border-bottom-left-radius: 4px; white-space: pre-wrap; }
+.chat-bottom { border-top: 1px solid var(--border); padding: 12px 16px; display: flex; gap: 10px; align-items: flex-end; }
+.chat-bottom textarea { flex: 1; min-height: 42px; max-height: 110px; resize: none; }
+.typing-dots { display: flex; gap: 4px; align-items: center; padding: 8px 0; }
+.typing-dots span { width: 5px; height: 5px; background: var(--muted); border-radius: 50%; animation: tdot .8s infinite; }
+.typing-dots span:nth-child(2){animation-delay:.15s}
+.typing-dots span:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+.urgency-label { font-size: 12px; font-weight: 600; }
+.u-critica { color: var(--danger); }
+.u-alta { color: var(--warn); }
+.u-media { color: #60a5fa; }
+.u-baixa { color: var(--success); }
+
+#toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 11px 18px; font-size: 13px; z-index: 999; opacity: 0; transform: translateY(6px); transition: all .2s; pointer-events: none; }
+#toast.show { opacity: 1; transform: translateY(0); }
+
+.empty { color: var(--muted); font-size: 13px; padding: 24px 0; text-align: center; }
+
+.trilho-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.trilho-pessoal { background: rgba(167,139,250,.13); color: #c4b5fd; }
+.trilho-empresa { background: rgba(99,102,241,.13); color: #a5b4fc; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">Career OS</div>
+    <div class="logo-sub">Consultor de Carreira Pessoal</div>
+  </div>
+  <div class="nav-section">Principal</div>
+  <div class="nav-item active" onclick="nav('dashboard',this)"><span class="nav-icon">📊</span>Dashboard</div>
+  <div class="nav-item" onclick="nav('hoje',this)"><span class="nav-icon">☀️</span>Novidades de Hoje</div>
+  <div class="nav-item" onclick="nav('advisor',this)"><span class="nav-icon">🤖</span>AI Advisor</div>
+  <div class="nav-section">Carreira</div>
+  <div class="nav-item" onclick="nav('projects',this)"><span class="nav-icon">🗂️</span>Projetos</div>
+  <div class="nav-item" onclick="nav('learning',this)"><span class="nav-icon">📚</span>Aprendizado</div>
+  <div class="nav-item" onclick="nav('goals',this)"><span class="nav-icon">🎯</span>Metas</div>
+  <div class="nav-section">Visão</div>
+  <div class="nav-item" onclick="nav('roadmap',this)"><span class="nav-icon">🗺️</span>Roadmap</div>
+  <div class="nav-item" onclick="nav('skills',this)"><span class="nav-icon">⚡</span>Habilidades</div>
+  <div class="nav-item" onclick="nav('trends',this)"><span class="nav-icon">📈</span>Tendências</div>
+  <div class="nav-item" onclick="nav('content',this)"><span class="nav-icon">📱</span>Estúdio de Marketing</div>
+  <div class="nav-item" onclick="nav('marketing',this)"><span class="nav-icon">🎨</span>Marketing & Posts</div>
+  <div class="sidebar-footer">
+    <div class="ai-dot"><div class="dot"></div>Claude AI ativo</div>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:12px;padding:7px" onclick="saveToFile()">💾 Salvar portal</button>
+      <div style="display:flex;gap:5px">
+        <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="exportJSON()">⬆ Export</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;font-size:11px" onclick="importJSON()">⬇ Import</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="panel-dashboard" class="panel active">
+  <div class="page-header">
+    <div class="page-header-text">
+      <h2>Dashboard</h2>
+      <p id="dash-date"></p>
+    </div>
+  </div>
+  <div class="grid3" style="margin-bottom:18px">
+    <div class="stat"><div class="stat-label">Projetos ativos</div><div class="stat-value" id="s-proj">0</div><div class="stat-sub">em andamento</div></div>
+    <div class="stat"><div class="stat-label">Estudando agora</div><div class="stat-value" id="s-learn">0</div><div class="stat-sub">itens em curso</div></div>
+    <div class="stat"><div class="stat-label">Metas do ano</div><div class="stat-value" id="s-goals">0</div><div class="stat-sub">definidas</div></div>
+  </div>
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-label">Prioridades urgentes</div>
+      <div id="dash-urgent"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Atalhos do advisor</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div class="chip" style="border-radius:8px;padding:8px 12px;font-size:12px" onclick="goAdvisor('Pesquise as principais tendências de IA e tecnologia para 2025 e classifique o que é mais urgente eu estudar como profissional com base em Delphi/VCL migrando para IA.')">📈 Tendências urgentes para mim agora</div>
+        <div class="chip" style="border-radius:8px;padding:8px 12px;font-size:12px" onclick="goAdvisor('Quais são os próximos 3 passos mais importantes para minha carreira esta semana?')">⚡ Meus próximos 3 passos esta semana</div>
+        <div class="chip" style="border-radius:8px;padding:8px 12px;font-size:12px" onclick="goAdvisor('Analise meu perfil e me sugira pautas de conteúdo para os dois trilhos de redes sociais: marca pessoal em IA e marca da empresa DIGPLUS.')">📱 Sugerir pautas de conteúdo agora</div>
+        <div class="chip" style="border-radius:8px;padding:8px 12px;font-size:12px" onclick="goAdvisor('Revise meus projetos e metas e me diga o que está em risco ou parado.')">🔍 Revisar progresso dos projetos</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Progresso das metas</div>
+    <div id="dash-goals-prog"></div>
+  </div>
+</div>
+
+<!-- HOJE -->
+<div id="panel-hoje" class="panel">
+  <div class="page-header">
+    <div class="page-header-text">
+      <h2>Novidades de Hoje</h2>
+      <p>Briefing diário: notícias relevantes + direcionamento real de estudo com curso e link.</p>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="loadBriefing()">☀️ Gerar briefing de hoje</button>
+  </div>
+  <div id="hoje-out">
+    <div class="card" style="text-align:center;padding:48px 20px">
+      <div style="font-size:36px;margin-bottom:12px">☀️</div>
+      <div style="font-size:14px;color:var(--text);margin-bottom:6px">Seu briefing diário personalizado</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;line-height:1.6">A IA pesquisa as notícias de IA/tecnologia mais relevantes para o seu perfil,<br>recomenda <b style="color:var(--text)">um curso específico com link</b> e explica por que ele agrega às suas metas.</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:20px">Conectado às suas metas, projetos e trilha de aprendizado.</div>
+      <button class="btn btn-primary" onclick="loadBriefing()">Gerar briefing agora</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI ADVISOR -->
+<div id="panel-advisor" class="panel">
+  <div class="page-header">
+    <div class="page-header-text">
+      <h2>AI Advisor</h2>
+      <p>Seu consultor de carreira — direto, proativo e conectado ao seu contexto real.</p>
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="chat-chips">
+      <div class="chip" onclick="sendChip('tendências')">📈 Tendências urgentes</div>
+      <div class="chip" onclick="sendChip('o que estudar')">📚 O que estudar agora</div>
+      <div class="chip" onclick="sendChip('novidades')">🌐 Novidades de IA</div>
+      <div class="chip" onclick="sendChip('próximos passos')">⚡ Próximos passos</div>
+      <div class="chip" onclick="sendChip('conteúdo')">📱 Pautas de conteúdo</div>
+      <div class="chip" onclick="sendChip('anticrastinação')">🔥 Anti-procrastinação</div>
+      <div class="chip" onclick="sendChip('status DIGGESTAO')">🗂️ Status DIGGESTAO</div>
+      <div class="chip" onclick="sendChip('avaliar carreira')">🎯 Avaliar carreira</div>
+    </div>
+    <div class="chat-wrap">
+      <div class="chat-msgs" id="chat-msgs">
+        <div class="msg ai">
+          <div class="msg-name">Career Advisor</div>
+          <div class="bubble">Olá! Estou aqui como seu consultor de carreira.
+
+Conheço seu perfil: administrador principal na empresa do seu pai, construindo o DIGGESTAO em Delphi/VCL, e querendo se tornar referência em IA e tecnologia — com dois trilhos em paralelo: marca pessoal e DIGPLUS.
+
+Posso te ajudar com:
+📈 Tendências de IA/TI com urgência classificada para o seu perfil
+📚 O que estudar agora (sem desperdiçar seu tempo escasso)
+📱 Estratégia e pautas para os dois canais de conteúdo
+🗂️ Acompanhamento do DIGGESTAO e novos projetos
+🔥 Te manter em movimento — sem procrastinação
+
+Use os atalhos acima ou me pergunte qualquer coisa.</div>
+        </div>
+      </div>
+      <div class="chat-bottom">
+        <textarea id="chat-in" placeholder="Pergunte sobre carreira, tecnologia, IA, conteúdo..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="sendMsg()">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJETOS -->
+<div id="panel-projects" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Projetos</h2><p>Acompanhe seus projetos técnicos e profissionais.</p></div>
+    <button class="btn btn-primary btn-sm" onclick="openM('m-proj')">+ Novo projeto</button>
+  </div>
+  <div id="proj-list"></div>
+</div>
+
+<!-- APRENDIZADO -->
+<div id="panel-learning" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Aprendizado</h2><p>Sua trilha de estudos com urgências definidas.</p></div>
+    <button class="btn btn-primary btn-sm" onclick="openM('m-learn')">+ Novo item</button>
+  </div>
+  <div id="learn-list"></div>
+</div>
+
+<!-- METAS -->
+<div id="panel-goals" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Metas</h2><p>Onde você quer chegar e como está progredindo.</p></div>
+    <button class="btn btn-primary btn-sm" onclick="openM('m-goal')">+ Nova meta</button>
+  </div>
+  <div id="goals-list"></div>
+</div>
+
+<!-- ROADMAP -->
+<div id="panel-roadmap" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Roadmap</h2><p>Sua visão de futuro e plano trimestral gerado pela IA.</p></div>
+    <button class="btn btn-primary btn-sm" onclick="genRoadmap()">🤖 Gerar com IA</button>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-label">Visão de carreira (3 anos)</div>
+    <textarea id="vision-txt" placeholder="Descreva onde quer chegar em 3 anos..." style="min-height:90px;margin-bottom:10px"></textarea>
+    <button class="btn btn-ghost btn-sm" onclick="saveVision()">Salvar visão</button>
+  </div>
+  <div id="roadmap-out"></div>
+</div>
+
+<!-- HABILIDADES -->
+<div id="panel-skills" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Habilidades</h2><p>Seu mapa de competências técnicas e profissionais.</p></div>
+    <button class="btn btn-primary btn-sm" onclick="openM('m-skill')">+ Adicionar</button>
+  </div>
+  <div id="skills-grid"></div>
+</div>
+
+<!-- TENDÊNCIAS -->
+<div id="panel-trends" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Tendências TI & IA</h2><p>Análise sob medida para o seu perfil — atualizada pela IA.</p></div>
+    <button class="btn btn-primary btn-sm" onclick="loadTrends()">🔄 Buscar tendências</button>
+  </div>
+  <div id="trends-out">
+    <div class="card" style="text-align:center;padding:48px 20px">
+      <div style="font-size:36px;margin-bottom:12px">📡</div>
+      <div style="font-size:14px;color:var(--text);margin-bottom:6px">Análise personalizada sob demanda</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px">A IA pesquisa tendências atuais e classifica por urgência para o seu perfil específico.</div>
+      <button class="btn btn-primary" onclick="loadTrends()">Analisar tendências agora</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEÚDO DIGITAL / MARKETING STUDIO -->
+<div id="panel-content" class="panel">
+  <div class="page-header">
+    <div class="page-header-text"><h2>Estúdio de Marketing</h2><p>Seu consultor de marketing pessoal — posts prontos, imagens e fila de aprovação.</p></div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="trilho-badge trilho-pessoal">Trilho Pessoal</span>
+      </div>
+      <div class="card-label" style="margin-bottom:6px">Marca pessoal — IA & Tecnologia</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px">Autoridade em IA, automações e ferramentas. Sem citar o DIGPLUS.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="tag tag-purple">Instagram pessoal</span>
+        <span class="tag tag-blue">LinkedIn</span>
+      </div>
+      <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center" onclick="genPost('pessoal')">✨ Gerar post completo</button>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span class="trilho-badge trilho-empresa">Trilho Empresa</span>
+      </div>
+      <div class="card-label" style="margin-bottom:6px">Marca da empresa — DIGPLUS</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px">Vendas do ERP: cases, funcionalidades, dores do cliente de comércio/serviço/transporte.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="tag tag-blue">Instagram empresa</span>
+        <span class="tag tag-gray">YouTube (futuro)</span>
+      </div>
+      <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center" onclick="genPost('empresa')">✨ Gerar post completo</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div class="card-label" style="margin-bottom:0">Tema específico (opcional)</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <input id="post-theme" placeholder="Ex: 5 automações com IA para pequenas empresas... (deixe vazio para a IA escolher)" style="flex:1">
+      <button class="btn btn-ghost btn-sm" onclick="genContent()">📋 Só pautas (10 ideias)</button>
+    </div>
+  </div>
+
+  <div id="content-out"></div>
+
+  <div class="card" style="margin-top:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="card-label" style="margin-bottom:0">📋 Fila de aprovação</div>
+      <span style="font-size:11px;color:var(--muted)">Nada é publicado sem o seu OK</span>
+    </div>
+    <div id="approval-queue"></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="m-proj">
+  <div class="modal">
+    <div class="modal-head"><h3>Novo Projeto</h3><button class="close" onclick="closeM('m-proj')">×</button></div>
+    <div class="field"><label>Nome</label><input id="p-name" placeholder="Ex: DIGGESTAO, Portfólio web..."></div>
+    <div class="field"><label>Descrição</label><textarea id="p-desc" placeholder="O que é este projeto?"></textarea></div>
+    <div class="field-row">
+      <div><label>Status</label><select id="p-status"><option>Em planejamento</option><option>Em desenvolvimento</option><option>Em revisão</option><option>Concluído</option><option>Pausado</option></select></div>
+      <div><label>Prioridade</label><select id="p-prio"><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select></div>
+    </div>
+    <div class="field-row">
+      <div><label>Tecnologias</label><input id="p-tech" placeholder="Delphi, Python, IA..."></div>
+      <div><label>Prazo</label><input id="p-date" type="date"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m-proj')">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="addProj()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="m-learn">
+  <div class="modal">
+    <div class="modal-head"><h3>Novo Item de Aprendizado</h3><button class="close" onclick="closeM('m-learn')">×</button></div>
+    <div class="field"><label>O que está aprendendo</label><input id="l-name" placeholder="Ex: Python, APIs com Delphi, Prompt Engineering..."></div>
+    <div class="field"><label>Por que é importante para você</label><textarea id="l-why" placeholder="Conecte com seus objetivos..."></textarea></div>
+    <div class="field-row">
+      <div><label>Urgência</label>
+        <select id="l-urgency">
+          <option value="critica">🔴 Crítica — 30 dias</option>
+          <option value="alta">🟠 Alta — 90 dias</option>
+          <option value="media">🟡 Média — 6 meses</option>
+          <option value="baixa">🟢 Baixa — sem pressa</option>
+        </select>
+      </div>
+      <div><label>Status</label>
+        <select id="l-status"><option>Na fila</option><option>Em curso</option><option>Concluído</option><option>Pausado</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Progresso (%)</label><input id="l-prog" type="number" min="0" max="100" value="0"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m-learn')">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="addLearn()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="m-goal">
+  <div class="modal">
+    <div class="modal-head"><h3>Nova Meta</h3><button class="close" onclick="closeM('m-goal')">×</button></div>
+    <div class="field"><label>Meta</label><input id="g-name" placeholder="Ex: Lançar presença no LinkedIn, Concluir DIGGESTAO..."></div>
+    <div class="field"><label>Por que esta meta importa</label><textarea id="g-why" placeholder="Impacto na sua carreira..."></textarea></div>
+    <div class="field-row">
+      <div><label>Prazo</label><input id="g-date" type="date"></div>
+      <div><label>Categoria</label>
+        <select id="g-cat">
+          <option>Técnica</option><option>Presença digital</option><option>Negócios</option>
+          <option>Produto</option><option>Certificação</option><option>Financeira</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Progresso atual (%)</label><input id="g-prog" type="number" min="0" max="100" value="0"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m-goal')">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="addGoal()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="m-skill">
+  <div class="modal">
+    <div class="modal-head"><h3>Nova Habilidade</h3><button class="close" onclick="closeM('m-skill')">×</button></div>
+    <div class="field"><label>Habilidade</label><input id="sk-name" placeholder="Ex: Delphi, SQL, Python, Gestão..."></div>
+    <div class="field-row">
+      <div><label>Nível atual (1-10)</label><input id="sk-lvl" type="number" min="1" max="10" value="5"></div>
+      <div><label>Categoria</label>
+        <select id="sk-cat">
+          <option>Linguagem</option><option>IA / Machine Learning</option><option>Banco de dados</option>
+          <option>Infraestrutura</option><option>Gestão</option><option>Vendas</option>
+          <option>Conteúdo digital</option><option>Ferramenta</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+      <button class="btn btn-ghost btn-sm" onclick="closeM('m-skill')">Cancelar</button>
+      <button class="btn btn-primary btn-sm" onclick="addSkill()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── STATE ──
+const D = {
+  projects: JSON.parse(localStorage.getItem('cos_proj')||'[]'),
+  learning: [],
+  goals:    [],
+  skills:   [],
+  posts:    [],
+  vision:   '',
+  chat:     [{ role:'assistant', content:`Olá! Estou aqui como seu consultor de carreira.\n\nConheço seu perfil: administrador principal na empresa do seu pai, construindo o DIGGESTAO em Delphi/VCL, e querendo se tornar referência em IA e tecnologia — com dois trilhos em paralelo: marca pessoal e DIGPLUS.\n\nPosso te ajudar com:\n📈 Tendências de IA/TI com urgência classificada para o seu perfil\n📚 O que estudar agora (sem desperdiçar seu tempo escasso)\n📱 Estratégia e pautas para os dois canais de conteúdo\n🗂️ Acompanhamento do DIGGESTAO e novos projetos\n🔥 Te manter em movimento — sem procrastinação\n\nUse os atalhos acima ou me pergunte qualquer coisa.` }]
+};
+
+// ── CARREGAR dados do bloco embutido no HTML ──
+function loadEmbedded(){
+  const el = document.getElementById('__data__');
+  if(!el) return;
+  try {
+    const saved = JSON.parse(el.textContent);
+    if(saved.projects) D.projects = saved.projects;
+    if(saved.learning) D.learning = saved.learning;
+    if(saved.goals)    D.goals    = saved.goals;
+    if(saved.skills)   D.skills   = saved.skills;
+    if(saved.posts)    D.posts    = saved.posts;
+    if(saved.vision)   D.vision   = saved.vision;
+  } catch(e){}
+}
+
+// ── SALVAR: gera novo HTML com dados embutidos e faz download ──
+function persist(){
+  // também salva no localStorage como cache local imediato
+  localStorage.setItem('cos_bak', JSON.stringify({
+    projects:D.projects, learning:D.learning, goals:D.goals,
+    skills:D.skills, posts:D.posts, vision:D.vision,
+    savedAt: new Date().toISOString()
+  }));
+}
+
+function saveToFile(){
+  const payload = JSON.stringify({
+    projects:D.projects, learning:D.learning, goals:D.goals,
+    skills:D.skills, posts:D.posts, vision:D.vision,
+    savedAt: new Date().toISOString()
+  }, null, 2);
+  const html = document.documentElement.outerHTML;
+  const updated = html.replace(
+    /(<script id="__data__" type="application\/json">)[^<]*(</script>)/,
+    `$1${payload}$2`
+  );
+  const blob = new Blob([updated], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'portal.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('💾 portal.html salvo! Substitua o arquivo na sua pasta.');
+}
+
+function exportJSON(){
+  const payload = JSON.stringify({
+    projects:D.projects, learning:D.learning, goals:D.goals,
+    skills:D.skills, posts:D.posts, vision:D.vision,
+    savedAt: new Date().toISOString()
+  }, null, 2);
+  const blob = new Blob([payload], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'career-os-dados.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('📦 Dados exportados como JSON!');
+}
+
+function importJSON(){
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if(data.projects) D.projects = data.projects;
+        if(data.learning) D.learning = data.learning;
+        if(data.goals)    D.goals    = data.goals;
+        if(data.skills)   D.skills   = data.skills;
+        if(data.posts)    D.posts    = data.posts;
+        if(data.vision)   D.vision   = data.vision;
+        persist(); renderAll();
+        toast('✅ Dados importados com sucesso!');
+      } catch(err){ toast('❌ Arquivo inválido.'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// seed initial data if empty
+function seedData(){
+  if(D.projects.length) return;
+  D.projects = [
+    { name:'DIGGESTAO', desc:'Sistema em Delphi/VCL para automatizar rotinas administrativas da empresa — financeiro, cobranças, inadimplência e gestão operacional.', status:'Em desenvolvimento', priority:'alta', tech:'Delphi / VCL / Object Pascal', deadline:'', createdAt: new Date().toISOString() }
+  ];
+  D.learning = [
+    { name:'Prompt Engineering', why:'Base fundamental para usar IA de forma profissional e criar automações. Diferencial imediato para o trilho pessoal.', urgency:'critica', status:'Em curso', progress:20 },
+    { name:'Python básico', why:'Linguagem mais usada em IA e automação. Complementa o Delphi e abre portas para scripts de automação e integrações.', urgency:'alta', status:'Na fila', progress:0 },
+    { name:'APIs REST com Delphi', why:'Permite integrar o DIGGESTAO e DIGPLUS com serviços externos — bancos, WhatsApp, IA.', urgency:'alta', status:'Na fila', progress:0 },
+    { name:'Fundamentos de IA / LLMs', why:'Entender como funcionam os modelos de linguagem para criar conteúdo de autoridade e aplicar no negócio.', urgency:'media', status:'Na fila', progress:0 },
+    { name:'Estratégia de conteúdo digital', why:'Necessário para construir os dois trilhos de presença digital do zero com consistência.', urgency:'alta', status:'Na fila', progress:0 }
+  ];
+  D.goals = [
+    { name:'Lançar perfil profissional no LinkedIn', why:'Primeiro passo para construir autoridade no trilho pessoal de tecnologia e IA.', deadline:'2025-03-31', category:'Presença digital', progress:0 },
+    { name:'Publicar primeiros 10 posts no Instagram pessoal', why:'Começar a construir presença digital e testar posicionamento como referência em IA/tecnologia.', deadline:'2025-04-30', category:'Presença digital', progress:0 },
+    { name:'Concluir módulo de cobranças do DIGGESTAO', why:'Automatizar o processo que mais consome tempo no dia a dia — emissão de boletos e controle de inadimplência.', deadline:'2025-05-31', category:'Produto', progress:15 },
+    { name:'Dominar APIs REST no Delphi', why:'Habilidade técnica crítica para o DIGGESTAO e para modernizar o DIGPLUS.', deadline:'2025-06-30', category:'Técnica', progress:5 }
+  ];
+  D.skills = [
+    { name:'Delphi / VCL', level:5, category:'Linguagem' },
+    { name:'Object Pascal', level:5, category:'Linguagem' },
+    { name:'SQL / Banco de dados', level:6, category:'Banco de dados' },
+    { name:'Gestão administrativa', level:9, category:'Gestão' },
+    { name:'Gestão financeira', level:8, category:'Gestão' },
+    { name:'Vendas B2B', level:7, category:'Vendas' },
+    { name:'Suporte técnico', level:7, category:'Ferramenta' },
+    { name:'Prompt Engineering', level:4, category:'IA / Machine Learning' }
+  ];
+  D.vision = 'Ser referência em tecnologia e IA no mercado brasileiro, reconhecido pela capacidade de unir visão de negócios com soluções técnicas reais. Em paralelo, escalar o DIGPLUS como produto competitivo no segmento de comércio, serviço e transporte.';
+  persist();
+}
+
+// ── NAVIGATION ──
+function nav(id, el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  renderAll();
+}
+
+// ── MODALS ──
+function openM(id){ document.getElementById(id).classList.add('open'); }
+function closeM(id){ document.getElementById(id).classList.remove('open'); }
+
+// ── TOAST ──
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+
+// ── RENDER ALL ──
+function renderAll(){
+  renderDash(); renderProjects(); renderLearning(); renderGoals(); renderSkills(); renderQueue();
+  if(D.vision) document.getElementById('vision-txt').value = D.vision;
+}
+
+function renderDash(){
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('s-proj').textContent  = D.projects.filter(p=>p.status!=='Concluído').length;
+  document.getElementById('s-learn').textContent = D.learning.filter(l=>l.status==='Em curso').length;
+  document.getElementById('s-goals').textContent = D.goals.length;
+
+  const urgEl = document.getElementById('dash-urgent');
+  const items = [
+    ...D.learning.filter(l=>l.urgency==='critica').map(l=>({icon:'📚',t:l.name,s:'Aprendizado crítico'})),
+    ...D.projects.filter(p=>p.priority==='alta'&&p.status!=='Concluído').map(p=>({icon:'🗂️',t:p.name,s:'Projeto — '+p.status})),
+    ...D.goals.filter(g=>g.progress<30&&g.deadline).map(g=>({icon:'🎯',t:g.name,s:'Meta com progresso baixo'}))
+  ].slice(0,5);
+  urgEl.innerHTML = items.length ? items.map(i=>`
+    <div class="list-row">
+      <span style="font-size:18px">${i.icon}</span>
+      <div class="list-row-body"><div class="list-row-title">${i.t}</div><div class="list-row-sub">${i.s}</div></div>
+    </div>`).join('') : '<div class="empty" style="padding:12px 0">Nenhuma urgência crítica no momento 🎉</div>';
+
+  const gEl = document.getElementById('dash-goals-prog');
+  gEl.innerHTML = D.goals.length ? D.goals.slice(0,4).map(g=>`
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <span style="font-size:13px;font-weight:500">${g.name}</span>
+        <span style="font-size:12px;color:var(--muted)">${g.progress}%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${g.progress}%;background:${g.progress>=80?'var(--success)':g.progress>=40?'var(--accent)':'var(--warn)'}"></div></div>
+    </div>`).join('') : '<div class="empty" style="padding:12px 0">Nenhuma meta cadastrada.</div>';
+}
+
+function renderProjects(){
+  const el = document.getElementById('proj-list');
+  if(!D.projects.length){ el.innerHTML='<div class="empty">Nenhum projeto cadastrado.</div>'; return; }
+  const prioTag = { alta:'tag-red', media:'tag-warn', baixa:'tag-green' };
+  el.innerHTML = D.projects.map((p,i)=>`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:14px;font-weight:600">${p.name}</span>
+            <span class="tag ${prioTag[p.priority]||'tag-gray'}">${p.priority}</span>
+            <span class="tag tag-blue">${p.status}</span>
+          </div>
+          ${p.desc?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px;line-height:1.5">${p.desc}</div>`:''}
+          ${p.tech?`<div style="font-size:11px;color:var(--accent);margin-bottom:4px">${p.tech}</div>`:''}
+          ${p.deadline?`<div style="font-size:11px;color:var(--muted)">📅 Prazo: ${new Date(p.deadline+'T12:00:00').toLocaleDateString('pt-BR')}</div>`:''}
+        </div>
+        <button class="btn btn-sm" style="color:var(--muted);padding:4px 8px;background:transparent;border:none;cursor:pointer;font-size:16px" onclick="delItem('projects',${i})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderLearning(){
+  const el = document.getElementById('learn-list');
+  if(!D.learning.length){ el.innerHTML='<div class="empty">Nenhum item de aprendizado cadastrado.</div>'; return; }
+  const uc = { critica:'u-critica', alta:'u-alta', media:'u-media', baixa:'u-baixa' };
+  const ul = { critica:'🔴 Crítica', alta:'🟠 Alta', media:'🟡 Média', baixa:'🟢 Baixa' };
+  el.innerHTML = D.learning.map((l,i)=>`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:14px;font-weight:600">${l.name}</span>
+            <span class="urgency-label ${uc[l.urgency]||''}">${ul[l.urgency]||l.urgency}</span>
+            <span class="tag tag-gray">${l.status}</span>
+          </div>
+          ${l.why?`<div style="font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.5">${l.why}</div>`:''}
+          <div class="progress-bar"><div class="progress-fill" style="width:${l.progress}%;background:var(--accent)"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">${l.progress}% concluído</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="bump('learning',${i})">+10%</button>
+          <button class="btn btn-sm" style="color:var(--muted);padding:4px 8px;background:transparent;border:none;cursor:pointer" onclick="delItem('learning',${i})">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderGoals(){
+  const el = document.getElementById('goals-list');
+  if(!D.goals.length){ el.innerHTML='<div class="empty">Nenhuma meta cadastrada.</div>'; return; }
+  const catTag = { 'Técnica':'tag-blue','Presença digital':'tag-purple','Negócios':'tag-green','Produto':'tag-warn','Certificação':'tag-red','Financeira':'tag-green' };
+  el.innerHTML = D.goals.map((g,i)=>`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span style="font-size:14px;font-weight:600">${g.name}</span>
+            <span class="tag ${catTag[g.category]||'tag-gray'}">${g.category}</span>
+          </div>
+          ${g.why?`<div style="font-size:12px;color:var(--muted);margin-bottom:6px;line-height:1.5">${g.why}</div>`:''}
+          ${g.deadline?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px">📅 Até: ${new Date(g.deadline+'T12:00:00').toLocaleDateString('pt-BR')}</div>`:''}
+          <div class="progress-bar"><div class="progress-fill" style="width:${g.progress}%;background:${g.progress>=80?'var(--success)':g.progress>=40?'var(--accent)':'var(--warn)'}"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">${g.progress}% concluído</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="bump('goals',${i})">+10%</button>
+          <button class="btn btn-sm" style="color:var(--muted);padding:4px 8px;background:transparent;border:none;cursor:pointer" onclick="delItem('goals',${i})">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSkills(){
+  const el = document.getElementById('skills-grid');
+  if(!D.skills.length){ el.innerHTML='<div class="empty">Nenhuma habilidade cadastrada.</div>'; return; }
+  const catTag = {'Linguagem':'tag-blue','IA / Machine Learning':'tag-purple','Banco de dados':'tag-green','Gestão':'tag-warn','Vendas':'tag-green','Conteúdo digital':'tag-purple','Ferramenta':'tag-gray','Infraestrutura':'tag-red'};
+  el.innerHTML = '<div class="grid-auto">' + D.skills.map((s,i)=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:5px">${s.name}</div>
+          <span class="tag ${catTag[s.category]||'tag-gray'}">${s.category}</span>
+        </div>
+        <button onclick="delItem('skills',${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px">×</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden">
+          <div style="width:${s.level*10}%;height:100%;background:var(--accent);border-radius:3px"></div>
+        </div>
+        <span style="font-size:12px;color:var(--muted);min-width:28px">${s.level}/10</span>
+      </div>
+    </div>`).join('') + '</div>';
+}
+
+// ── CRUD ──
+function addProj(){
+  const n = document.getElementById('p-name').value.trim();
+  if(!n) return toast('Digite o nome do projeto');
+  D.projects.push({ name:n, desc:document.getElementById('p-desc').value.trim(), status:document.getElementById('p-status').value, priority:document.getElementById('p-prio').value, tech:document.getElementById('p-tech').value.trim(), deadline:document.getElementById('p-date').value, createdAt:new Date().toISOString() });
+  persist(); closeM('m-proj'); renderAll(); toast('Projeto adicionado ✅');
+  ['p-name','p-desc','p-tech'].forEach(id=>document.getElementById(id).value='');
+}
+
+function addLearn(){
+  const n = document.getElementById('l-name').value.trim();
+  if(!n) return toast('Digite o que está aprendendo');
+  D.learning.push({ name:n, why:document.getElementById('l-why').value.trim(), urgency:document.getElementById('l-urgency').value, status:document.getElementById('l-status').value, progress:parseInt(document.getElementById('l-prog').value)||0 });
+  persist(); closeM('m-learn'); renderAll(); toast('Item adicionado ✅');
+  ['l-name','l-why'].forEach(id=>document.getElementById(id).value='');
+}
+
+function addGoal(){
+  const n = document.getElementById('g-name').value.trim();
+  if(!n) return toast('Digite a meta');
+  D.goals.push({ name:n, why:document.getElementById('g-why').value.trim(), deadline:document.getElementById('g-date').value, category:document.getElementById('g-cat').value, progress:parseInt(document.getElementById('g-prog').value)||0 });
+  persist(); closeM('m-goal'); renderAll(); toast('Meta adicionada ✅');
+  ['g-name','g-why'].forEach(id=>document.getElementById(id).value='');
+}
+
+function addSkill(){
+  const n = document.getElementById('sk-name').value.trim();
+  if(!n) return toast('Digite o nome da habilidade');
+  D.skills.push({ name:n, level:parseInt(document.getElementById('sk-lvl').value)||5, category:document.getElementById('sk-cat').value });
+  persist(); closeM('m-skill'); renderAll(); toast('Habilidade adicionada ✅');
+  document.getElementById('sk-name').value='';
+}
+
+function delItem(col,i){ D[col].splice(i,1); persist(); renderAll(); toast('Removido.'); }
+function bump(col,i){ D[col][i].progress = Math.min(100,(D[col][i].progress||0)+10); persist(); renderAll(); }
+
+function saveVision(){
+  D.vision = document.getElementById('vision-txt').value.trim();
+  persist(); toast('Visão salva ✅');
+}
+
+// ── SYSTEM PROMPT ──
+function sysPrompt(){
+  return `Você é o consultor de carreira pessoal de um profissional brasileiro de 33 anos, casado, com as seguintes características:
+
+PERFIL:
+- Bacharel em Administração de Empresas (não é dev de formação)
+- Aprendeu Delphi/VCL recentemente
+- Administrador principal da empresa do pai — ERP DIGPLUS para comércio, serviço e transporte
+- Acumula: decisões executivas, financeiro completo, contratos, vendas diretas, suporte técnico (~15 atendimentos/dia), treinamento de clientes, emissão de NF, manutenção de BD
+- Está construindo o DIGGESTAO (Delphi/VCL) para automatizar suas próprias rotinas operacionais
+- Presença digital: zero hoje (1 post no Instagram pessoal, empresa sem nenhum post)
+
+OBJETIVOS:
+Dois trilhos em paralelo:
+1. Marca pessoal: ser visto como referência em IA e tecnologia (conteúdo sobre IA, automações, ferramentas — sem falar do DIGPLUS diretamente)
+2. Marca da empresa: crescer o DIGPLUS com conteúdo voltado a vendas (comércio, serviço, transporte)
+
+CONTEXTO ATUAL:
+${JSON.stringify({ projetos: D.projects, aprendizado: D.learning, metas: D.goals, habilidades: D.skills, visao: D.vision }, null, 2)}
+
+COMO AGIR:
+- Direto, objetivo, sem textão sem propósito
+- Use web_search para tendências e novidades de IA/TI — nunca responda de memória quando o assunto for atual
+- Classifique urgências: 🔴 Crítica (30 dias) / 🟠 Alta (90 dias) / 🟡 Média (6 meses) / 🟢 Baixa
+- Considere que o tempo do usuário é muito escasso — priorize sempre impacto máximo com menor esforço
+- Conecte tecnologia com negócio e com os dois trilhos de conteúdo
+- Se algo estiver parado, sinalize com ação concreta para desbloquear
+- Sempre em português brasileiro`;
+}
+
+// ── CHAT ──
+// ── DETECÇÃO DE AMBIENTE ──
+const IS_LOCAL = location.protocol === 'file:';
+
+// Abre Claude.ai com o prompt pronto numa nova aba
+function openClaude(prompt){
+  const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+  window.open(url, '_blank');
+}
+
+// Contexto compacto para enviar ao Claude.ai
+function ctxResume(){
+  return `[CAREER OS — contexto do usuário]
+Projetos: ${D.projects.map(p=>p.name+' ('+p.status+')').join(', ')||'nenhum'}
+Aprendizado em curso: ${D.learning.filter(l=>l.status==='Em curso').map(l=>l.name).join(', ')||'nenhum'}
+Metas: ${D.goals.map(g=>g.name+' '+g.progress+'%').join(', ')||'nenhuma'}
+Visão: ${D.vision||'não definida'}
+---
+`;
+}
+
+async function callAI(msg){
+  if(IS_LOCAL){
+    // Abre Claude.ai com o contexto + pergunta
+    openClaude(ctxResume() + msg);
+    throw new Error('LOCAL_REDIRECT');
+  }
+  const msgs = [...D.chat, { role:'user', content:msg }];
+  const r = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:sysPrompt(), tools:[{type:'web_search_20250305',name:'web_search'}], messages:msgs })
+  });
+  const d = await r.json();
+  return (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n') || 'Não consegui processar. Tente novamente.';
+}
+
+function appendMsg(role, text){
+  const el = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'msg ' + role;
+  d.innerHTML = (role==='ai'?'<div class="msg-name">Career Advisor</div>':'') + `<div class="bubble">${text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>`;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+function showTyping(){
+  const el = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className='msg ai'; d.id='typing';
+  d.innerHTML='<div class="msg-name">Career Advisor</div><div class="bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function hideTyping(){ const t=document.getElementById('typing'); if(t)t.remove(); }
+
+async function sendMsg(){
+  const inp = document.getElementById('chat-in');
+  const msg = inp.value.trim();
+  if(!msg) return;
+  inp.value = '';
+  appendMsg('user', msg);
+  D.chat.push({ role:'user', content:msg });
+  showTyping();
+  try {
+    const reply = await callAI(msg);
+    hideTyping();
+    appendMsg('ai', reply);
+    D.chat.push({ role:'assistant', content:reply });
+    if(D.chat.length > 24) D.chat = D.chat.slice(-24);
+  } catch(e){
+    hideTyping();
+    if(e.message === 'LOCAL_REDIRECT'){
+      appendMsg('ai', '↗️ Abri o Claude.ai numa nova aba com seu contexto e pergunta. Responda lá e traga o resultado aqui se quiser salvar.');
+    } else {
+      appendMsg('ai','❌ Erro de conexão. Verifique e tente novamente.');
+    }
+  }
+}
+
+function sendChip(t){ document.getElementById('chat-in').value=t; sendMsg(); }
+
+function goAdvisor(msg){
+  nav('advisor', document.querySelector('.nav-item[onclick*="advisor"]'));
+  setTimeout(()=>{ document.getElementById('chat-in').value=msg; sendMsg(); }, 150);
+}
+
+// ── BRIEFING DIÁRIO ──
+async function loadBriefing(){
+  const hoje = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  if(IS_LOCAL){
+    const prompt = ctxResume() + `Hoje é ${hoje}. Gere meu briefing diário com esta estrutura:
+
+## 📰 Notícias de hoje
+Pesquise e traga as 3 notícias de IA/tecnologia mais relevantes desta semana PARA MEU PERFIL. Para cada uma: 1 linha do fato + 1 linha de "o que isso significa para você".
+
+## 🎯 Comece por aqui — recomendação de estudo de hoje
+Pesquise na web e recomende UM curso específico com LINK REAL. Informe: nome + plataforma + link completo, gratuito ou pago, carga horária, POR QUE este curso (conectado às minhas metas), e primeiro passo concreto para hoje.
+
+## 🧭 Onde você está no caminho
+Em 3-4 linhas: em que etapa da jornada estou, o que vem depois, e se estou no ritmo certo.`;
+
+    document.getElementById('hoje-out').innerHTML=`
+      <div class="card" style="border-color:var(--accent)">
+        <div class="card-label">☀️ Briefing de hoje — ${hoje}</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px">
+          O portal está rodando localmente (<code style="font-size:11px;background:var(--surface2);padding:1px 5px;border-radius:3px">file://</code>) e não consegue chamar a IA diretamente por questão de segurança do browser.<br><br>
+          Clique no botão abaixo — o Claude.ai vai abrir numa nova aba com todo o seu contexto e o prompt do briefing já preenchido. É só pressionar Enter lá.
+        </div>
+        <button class="btn btn-primary" onclick="openClaude(${JSON.stringify(prompt)})">☀️ Abrir briefing no Claude.ai →</button>
+        <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:8px">💡 Quer que a IA funcione direto aqui, sem abrir outra aba? São 3 passos simples:</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.8">
+            1. Acesse <a href="https://pages.github.com" target="_blank" style="color:var(--accent)">GitHub Pages</a> (gratuito) e crie uma conta<br>
+            2. Suba o arquivo <code style="font-size:11px;background:var(--surface2);padding:1px 4px;border-radius:3px">portal.html</code> num repositório<br>
+            3. Acesse pelo link <code style="font-size:11px;background:var(--surface2);padding:1px 4px;border-radius:3px">seuusuario.github.io/career-os</code> — tudo funciona direto, inclusive pelo celular
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="goAdvisor('Me explique passo a passo como hospedar meu portal no GitHub Pages gratuitamente, do zero.')">🤖 Me explique como fazer isso →</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('hoje-out').innerHTML=`<div class="card" style="text-align:center;padding:48px"><div class="typing-dots" style="justify-content:center;margin-bottom:12px"><span></span><span></span><span></span></div><div style="font-size:13px;color:var(--muted)">Pesquisando notícias e cursos para você...<br><span style="font-size:11px">Isso pode levar alguns segundos — estou buscando na web.</span></div></div>`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:sysPrompt() + `\n\nREGRA CRÍTICA PARA ESTE BRIEFING: ao recomendar curso, você DEVE pesquisar na web e trazer o LINK REAL do curso (URL completa). Nunca diga "procure por X" — entregue o link pronto. Priorize: cursos gratuitos ou de baixo custo, em português quando houver boa opção, com carga horária viável para quem tem pouquíssimo tempo livre.`,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:`Hoje é ${hoje}. Gere meu briefing diário com EXATAMENTE esta estrutura:
+
+## 📰 Notícias de hoje
+Pesquise e traga as 3 notícias de IA/tecnologia mais relevantes desta semana PARA O MEU PERFIL específico (não notícias genéricas). Para cada uma: 1 linha do fato + 1 linha de "o que isso significa para você".
+
+## 🎯 Comece por aqui — recomendação de estudo de hoje
+Pesquise na web e recomende UM curso específico (com LINK REAL e completo) que seja o melhor próximo passo para mim agora, considerando minha trilha de aprendizado atual e minhas metas. Informe:
+- Nome do curso + plataforma + link completo
+- Gratuito ou pago (e preço se pago)
+- Carga horária estimada
+- POR QUE este curso: como ele agrega à minha carreira e a quais das minhas metas ele se conecta diretamente
+- Primeiro passo concreto: o que fazer hoje mesmo (ex: "assista os 2 primeiros módulos, são 40min")
+
+## 🧭 Onde você está no caminho
+Em 3-4 linhas: com base no meu progresso atual (projetos, aprendizado, metas), me diga em que etapa da jornada estou, o que vem depois, e se estou no ritmo certo ou precisando acelerar algo.`}]})
+    });
+    const d = await r.json();
+    const txt = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+    const html = txt
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g,'<a href="$2" target="_blank" style="color:var(--accent);text-decoration:underline">$1</a>')
+      .replace(/(^|[^"(\[])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" style="color:var(--accent);text-decoration:underline">$2</a>')
+      .replace(/^## (.+)$/gm,'<div style="font-size:14px;font-weight:600;color:var(--text);margin:18px 0 8px">$1</div>')
+      .replace(/^### (.+)$/gm,'<div style="font-size:13px;font-weight:600;color:var(--text);margin:12px 0 6px">$1</div>')
+      .replace(/\*\*([^*]+)\*\*/g,'<b style="color:var(--text)">$1</b>')
+      .replace(/\n/g,'<br>');
+    document.getElementById('hoje-out').innerHTML=`
+      <div class="card" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div class="card-label" style="margin-bottom:0">Briefing — ${hoje}</div>
+          <button class="btn btn-ghost btn-sm" onclick="loadBriefing()">🔄 Atualizar</button>
+        </div>
+        <div style="font-size:13px;line-height:1.75;color:var(--muted)">${html}</div>
+      </div>
+      <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="font-size:12px;color:var(--muted)">Gostou da recomendação? Adicione à sua trilha:</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary btn-sm" onclick="openM('m-learn')">+ Adicionar ao aprendizado</button>
+          <button class="btn btn-ghost btn-sm" onclick="goAdvisor('Sobre a recomendação de curso do briefing de hoje: tenho dúvidas. Pode detalhar mais o conteúdo do curso e como encaixar na minha rotina apertada?')">💬 Discutir com o advisor</button>
+        </div>
+      </div>`;
+  } catch(e){
+    document.getElementById('hoje-out').innerHTML='<div class="card"><div style="color:var(--danger)">Erro ao gerar o briefing. Tente novamente.</div></div>';
+  }
+}
+
+// ── TRENDS ──
+async function loadTrends(){
+  if(IS_LOCAL){
+    const prompt = ctxResume() + 'Pesquise as tendências de IA e TI mais relevantes em 2025 para o meu perfil. Para cada tendência informe: título, urgência (🔴 Crítica / 🟠 Alta / 🟡 Média / 🟢 Baixa), categoria, descrição em 2 frases, ação concreta que devo tomar, e por que é relevante para quem vem do Delphi/VCL e quer construir presença em IA.';
+    window.open('https://claude.ai/new?q='+encodeURIComponent(prompt), '_blank');
+    toast('↗️ Abrindo análise de tendências no Claude.ai...');
+    return;
+  }
+  document.getElementById('trends-out').innerHTML=`<div class="card" style="text-align:center;padding:48px"><div class="typing-dots" style="justify-content:center;margin-bottom:12px"><span></span><span></span><span></span></div><div style="font-size:13px;color:var(--muted)">Pesquisando tendências atuais...</div></div>`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:'Responda APENAS em JSON válido, sem texto fora do JSON, sem markdown.', tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:`Pesquise as tendências de IA e TI mais relevantes em 2025 para um profissional brasileiro com estas características: administrador de empresa de ERP (Delphi/VCL, comércio/serviço/transporte), aprendendo programação, quer se tornar referência em IA e tecnologia, construindo presença digital do zero. Retorne exatamente este JSON: {"trends":[{"title":"","urgency":"critica|alta|media|baixa","category":"","description":"","action":"ação concreta e específica","relevancia":"por que importa para este perfil específico"}]}`}]})
+    });
+    const d = await r.json();
+    const txt = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const parsed = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    const uc={critica:'u-critica',alta:'u-alta',media:'u-media',baixa:'u-baixa'};
+    const ul={critica:'🔴 Crítica',alta:'🟠 Alta',media:'🟡 Média',baixa:'🟢 Baixa'};
+    document.getElementById('trends-out').innerHTML = '<div class="grid2">' + (parsed.trends||[]).map(t=>`
+      <div class="card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+          <div style="font-size:13px;font-weight:600">${t.title}</div>
+          <span class="urgency-label ${uc[t.urgency]||''}" style="white-space:nowrap">${ul[t.urgency]||t.urgency}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.5">${t.description}</div>
+        <div style="font-size:12px;color:var(--accent);margin-bottom:6px">💡 ${t.action}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px">🎯 ${t.relevancia}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="tag tag-gray">${t.category}</span>
+          <button class="btn btn-ghost btn-sm" onclick="addTrendToLearn('${t.title.replace(/'/g,'&#39;')}','${t.urgency}','${t.relevancia.replace(/'/g,'&#39;')}')">+ Estudar</button>
+        </div>
+      </div>`).join('') + '</div>';
+  } catch(e){
+    document.getElementById('trends-out').innerHTML='<div class="card"><div style="color:var(--danger)">Erro ao carregar. Tente novamente.</div></div>';
+  }
+}
+
+function addTrendToLearn(name,urgency,why){
+  D.learning.push({ name, urgency, why, status:'Na fila', progress:0 });
+  persist(); toast('Adicionado ao aprendizado 📚');
+}
+
+// ── ROADMAP ──
+async function genRoadmap(){
+  const v = document.getElementById('vision-txt').value.trim();
+  if(!v) return toast('Preencha sua visão de carreira primeiro');
+  D.vision=v; persist();
+  if(IS_LOCAL){
+    const prompt = ctxResume() + `Minha visão de carreira: "${v}". Crie um roadmap trimestral de 12 meses considerando meu perfil completo. Seja específico com tecnologias, ações e resultados esperados por trimestre. Use formato markdown organizado.`;
+    window.open('https://claude.ai/new?q='+encodeURIComponent(prompt), '_blank');
+    toast('↗️ Abrindo gerador de roadmap no Claude.ai...');
+    return;
+  }
+  document.getElementById('roadmap-out').innerHTML=`<div class="card" style="text-align:center;padding:36px"><div class="typing-dots" style="justify-content:center;margin-bottom:10px"><span></span><span></span><span></span></div><div style="font-size:13px;color:var(--muted)">Gerando roadmap personalizado...</div></div>`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:sysPrompt(), messages:[{role:'user',content:`Crie um roadmap trimestral de 12 meses com base na minha visão: "${v}". Considere todo meu contexto. Seja específico com tecnologias, ações e resultados esperados por trimestre. Formato markdown organizado.`}]})
+    });
+    const d = await r.json();
+    const txt = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    document.getElementById('roadmap-out').innerHTML=`<div class="card"><div class="card-label">Roadmap gerado pela IA</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap;color:var(--text)">${txt}</div></div>`;
+  } catch(e){ document.getElementById('roadmap-out').innerHTML='<div class="card"><div style="color:var(--danger)">Erro. Tente novamente.</div></div>'; }
+}
+
+// ── CONTENT / MARKETING ──
+async function genPost(trilho){
+  const theme = document.getElementById('post-theme').value.trim();
+  const trilhoDesc = trilho==='pessoal'
+    ? 'TRILHO PESSOAL: marca pessoal de autoridade em IA/tecnologia/automação. PROIBIDO mencionar DIGPLUS ou ERP da empresa. Tom: profissional acessível, didático, gera valor real. Público: empresários e profissionais curiosos sobre IA.'
+    : 'TRILHO EMPRESA: perfil do ERP DIGPLUS. Foco em vendas: dores reais de quem gere comércio, serviço ou transporte (controle financeiro, emissão de NF, boletos, inadimplência, estoque). Tom: direto, focado em benefício e resultado.';
+
+  if(IS_LOCAL){
+    const prompt = ctxResume() + `${trilhoDesc}\n\n${theme?'Tema: '+theme:'Escolha o melhor tema para este momento.'}\n\nCrie UM post completo pronto para publicar com: legenda completa (gancho forte + corpo + CTA), hashtags, descrição da imagem ideal, prompt de imagem em inglês para Midjourney/DALL-E, melhor horário para publicar e dica de marketing para este post performar melhor.`;
+    window.open('https://claude.ai/new?q='+encodeURIComponent(prompt), '_blank');
+    toast('↗️ Abrindo gerador de post no Claude.ai...');
+    return;
+  }
+  document.getElementById('content-out').innerHTML=`<div class="card" style="text-align:center;padding:36px"><div class="typing-dots" style="justify-content:center;margin-bottom:10px"><span></span><span></span><span></span></div><div style="font-size:13px;color:var(--muted)">Criando post completo como um profissional de marketing...</div></div>`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
+        system: sysPrompt() + '\n\nVocê agora atua como CONSULTOR PROFISSIONAL DE MARKETING DIGITAL E IMAGEM. Responda APENAS em JSON válido, sem markdown, sem texto fora do JSON.',
+        messages:[{role:'user',content:`${trilhoDesc}
+
+${theme ? 'Tema solicitado: '+theme : 'Escolha você o melhor tema para este momento, considerando meu contexto e o que performa bem.'}
+
+Crie UM post completo e pronto para publicar. Retorne exatamente este JSON:
+{
+  "titulo": "título interno do post",
+  "formato": "post único | carrossel | reels",
+  "canal": "Instagram | LinkedIn | ambos",
+  "legenda": "legenda completa pronta para copiar e colar, com gancho forte na primeira linha, quebras de linha, e CTA no final",
+  "hashtags": "lista de hashtags separadas por espaço",
+  "imagem_descricao": "descrição do visual ideal para este post em 2 frases",
+  "imagem_prompt": "prompt completo e detalhado em inglês, pronto para colar em um gerador de imagens (Midjourney/DALL-E/Ideogram), incluindo estilo, cores, composição",
+  "melhor_horario": "dia da semana e horário sugerido com justificativa curta",
+  "dica_marketing": "uma dica profissional de marketing específica para este post performar melhor"
+}`}]})
+    });
+    const d = await r.json();
+    const txt = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const post = JSON.parse(txt.replace(/```json|```/g,'').trim());
+    post.trilho = trilho;
+    post.status = 'rascunho';
+    post.createdAt = new Date().toISOString();
+    renderPostPreview(post);
+  } catch(e){
+    document.getElementById('content-out').innerHTML='<div class="card"><div style="color:var(--danger)">Erro ao gerar o post. Tente novamente.</div></div>';
+  }
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+function renderPostPreview(post){
+  window._currentPost = post;
+  const tb = post.trilho==='pessoal' ? '<span class="trilho-badge trilho-pessoal">Trilho Pessoal</span>' : '<span class="trilho-badge trilho-empresa">Trilho Empresa</span>';
+  document.getElementById('content-out').innerHTML=`
+    <div class="card" style="border-color:var(--accent)">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        ${tb}
+        <span class="tag tag-blue">${esc(post.formato)}</span>
+        <span class="tag tag-gray">${esc(post.canal)}</span>
+      </div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:14px">${esc(post.titulo)}</div>
+
+      <div class="card-label" style="margin-bottom:6px">📝 Legenda (pronta para copiar)</div>
+      <div style="background:var(--surface2);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;white-space:pre-wrap;margin-bottom:6px">${esc(post.legenda)}</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="btn btn-ghost btn-sm" onclick="copyText(window._currentPost.legenda + '\\n\\n' + window._currentPost.hashtags)">📋 Copiar legenda + hashtags</button>
+      </div>
+
+      <div class="card-label" style="margin-bottom:6px"># Hashtags</div>
+      <div style="font-size:12px;color:var(--accent);margin-bottom:14px;line-height:1.6">${esc(post.hashtags)}</div>
+
+      <div class="card-label" style="margin-bottom:6px">🎨 Imagem sugerida</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.6">${esc(post.imagem_descricao)}</div>
+      <div style="background:var(--surface2);border-radius:8px;padding:12px;font-size:12px;font-family:monospace;color:var(--accent2);line-height:1.6;margin-bottom:6px">${esc(post.imagem_prompt)}</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="btn btn-ghost btn-sm" onclick="copyText(window._currentPost.imagem_prompt)">📋 Copiar prompt de imagem</button>
+      </div>
+
+      <div class="grid2" style="gap:10px;margin-bottom:16px">
+        <div style="background:var(--surface2);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">⏰ Melhor horário</div>
+          <div style="font-size:12px;line-height:1.5">${esc(post.melhor_horario)}</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:3px">💡 Dica de marketing</div>
+          <div style="font-size:12px;line-height:1.5">${esc(post.dica_marketing)}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px">
+        <button class="btn btn-ghost btn-sm" onclick="genPost('${post.trilho}')">🔄 Gerar outro</button>
+        <button class="btn btn-primary btn-sm" onclick="saveToQueue()">✅ Aprovar e salvar na fila</button>
+      </div>
+    </div>`;
+}
+
+function saveToQueue(){
+  if(!window._currentPost) return;
+  window._currentPost.status = 'aprovado';
+  D.posts.push(window._currentPost);
+  persist();
+  renderQueue();
+  toast('Post aprovado e salvo na fila ✅');
+  document.getElementById('content-out').innerHTML='';
+}
+
+function renderQueue(){
+  const el = document.getElementById('approval-queue');
+  if(!el) return;
+  if(!D.posts.length){
+    el.innerHTML = '<div class="empty" style="padding:14px 0">Nenhum post na fila. Gere um post acima e aprove para salvar aqui.</div>';
+    return;
+  }
+  el.innerHTML = D.posts.slice().reverse().map((p, ri)=>{
+    const i = D.posts.length - 1 - ri;
+    const tb = p.trilho==='pessoal' ? '<span class="trilho-badge trilho-pessoal" style="font-size:10px">Pessoal</span>' : '<span class="trilho-badge trilho-empresa" style="font-size:10px">Empresa</span>';
+    return `
+    <div class="list-row">
+      <div class="list-row-body">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="list-row-title">${esc(p.titulo)}</span>
+          ${tb}
+          <span class="tag ${p.status==='publicado'?'tag-green':'tag-warn'}" style="font-size:10px">${p.status==='publicado'?'✓ Publicado':'Aprovado — aguardando publicação'}</span>
+        </div>
+        <div class="list-row-sub">${esc(p.formato)} · ${esc(p.canal)} · ${new Date(p.createdAt).toLocaleDateString('pt-BR')}</div>
+      </div>
+      <div class="list-row-actions">
+        <button class="btn btn-ghost btn-sm" onclick="copyText(D.posts[${i}].legenda + '\\n\\n' + D.posts[${i}].hashtags)">📋</button>
+        ${p.status!=='publicado'?`<button class="btn btn-ghost btn-sm" onclick="markPublished(${i})">✓ Publiquei</button>`:''}
+        <button class="btn btn-sm" style="color:var(--muted);background:transparent;border:none;cursor:pointer" onclick="delPost(${i})">🗑</button>
+      </div>
+    </div>`;}).join('');
+}
+
+function markPublished(i){ D.posts[i].status='publicado'; persist(); renderQueue(); toast('Marcado como publicado 🎉'); }
+function delPost(i){ D.posts.splice(i,1); persist(); renderQueue(); toast('Removido da fila.'); }
+
+function copyText(t){
+  navigator.clipboard.writeText(t).then(()=>toast('Copiado! 📋')).catch(()=>{
+    const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('Copiado! 📋');
+  });
+}
+
+async function genContent(){
+  if(IS_LOCAL){
+    const prompt = ctxResume() + 'Gere 5 pautas de conteúdo para o trilho pessoal (IA/tecnologia, sem mencionar DIGPLUS) e 5 pautas para o trilho da empresa (DIGPLUS, voltado a vendas para comércio/serviço/transporte). Para cada pauta: título chamativo, formato sugerido (post, carrossel, reels, artigo) e o gancho principal. Pense no Instagram e LinkedIn.';
+    window.open('https://claude.ai/new?q='+encodeURIComponent(prompt), '_blank');
+    toast('↗️ Abrindo gerador de pautas no Claude.ai...');
+    return;
+  }
+  document.getElementById('content-out').innerHTML=`<div class="card" style="text-align:center;padding:36px"><div class="typing-dots" style="justify-content:center;margin-bottom:10px"><span></span><span></span><span></span></div><div style="font-size:13px;color:var(--muted)">Gerando pautas para os dois trilhos...</div></div>`;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:sysPrompt(), messages:[{role:'user',content:`Gere 5 pautas de conteúdo para o trilho pessoal (IA/tecnologia, sem mencionar DIGPLUS) e 5 pautas para o trilho da empresa (DIGPLUS, voltado a vendas para comércio/serviço/transporte). Para cada pauta: título chamativo, formato sugerido (post, carrossel, reels, artigo) e o gancho principal. Pense no Instagram e LinkedIn.`}]})
+    });
+    const d = await r.json();
+    const txt = (d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    document.getElementById('content-out').innerHTML=`<div class="card"><div class="card-label">Pautas geradas pela IA</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap;color:var(--text)">${txt}</div></div>`;
+  } catch(e){ document.getElementById('content-out').innerHTML='<div class="card"><div style="color:var(--danger)">Erro. Tente novamente.</div></div>'; }
+}
+
+// ── INIT ──
+loadEmbedded();
+// fallback: se não tinha dados no HTML, tenta localStorage backup
+if(!D.projects.length){
+  try {
+    const bak = localStorage.getItem('cos_bak');
+    if(bak){
+      const saved = JSON.parse(bak);
+      if(saved.projects) D.projects = saved.projects;
+      if(saved.learning) D.learning = saved.learning;
+      if(saved.goals)    D.goals    = saved.goals;
+      if(saved.skills)   D.skills   = saved.skills;
+      if(saved.posts)    D.posts    = saved.posts;
+      if(saved.vision)   D.vision   = saved.vision;
+    }
+  } catch(e){}
+}
+seedData();
+renderAll();
+</script>
+
+<script id="__data__" type="application/json">{}</script>
+
+</body>
+</html>
